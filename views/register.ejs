@@ -1,15 +1,17 @@
+<html>
+<head>
+<head>
 <body>
-
-  <h1>Registration</h1>
-  <h3> Please enter an email address and a password</h3>
+   <h3>Registration</h3>
   <form action="/register" method="POST">
   <label for="email"><b>E-mail</b></label>
-    <input type="email" name="email"/>
-    <label for="password"><b>Password</b></label>
-    <input type="password" name="password"/>
-    <input type="submit" value="Register" />
-    <n><input type="submit" value = "Return to home page"/></n>
+  <input id = "email" type = "email" name="email" placeholder="Enter email here">
+  <label for="password"><b>Password:</b></label>
+        <input id="password" type="password" name ="password" placeholder="Enter password here">
+        <input type="submit" value="Submit">
   </form>
+  <a href="/urls"> Home</a>
 
 </body>
 </html>
+

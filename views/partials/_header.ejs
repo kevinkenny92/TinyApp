@@ -1,12 +1,23 @@
-<header>
-  <h2>Welcome to TinyURL Project </h2>
-</header>
+<html>
+<head>
+  <title>Welcome to Tiny App</title>
+</head>
 <body>
 
+    <% if (user !== undefined) { %>
+    <g>Current user is <i><%= user.email %></i>
 
-    <a href="/register">Register</a>
-    <a href="/login">Login</a>
-    <a href="/logout">Sign Out</a>
+    <form action ="/logout" method = "POST">
+    </form>
 
+    <% } else{ %>
+  <a href="/register">Register</a> or <a href="/login">Login</a>
+<% } %>
 
 </body>
+</html>
+
+
+
+
+

@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>TinyApp: Show URLs</title>
+</head>
+<body>
+      <% if (fullURL === undefined) { %>
+      <l>Invalid  URL</l>
+      <form action="/urls/:<%= shortURL %> method="POST">
+      <input typ="text" name="name" placeholder="Enter link here>
+      <input type="submit" value="Update"/>
+       <% } else if (user === undefined) { %>
+       <l> Unauthorized access! User must be logged in to access URL </l>
+       <% } else if (urlUserID !== user.id ) { %>
+       <h2>Shortened URL Details</h2>
+      <gb>
+        <li>Short URL: <a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></li>
+        <li>Full URL: <a href="<%= fullURL %>"><%= fullURL %></a></li>
+        <li>Update:
+          <form action="/urls/:id" method="POST">
+            <label for="newLongURL">Enter an updated URL:</label>
+            <input id="newLongURL" type="text" name="newLongURL" placeholder=" Full URL">
+            <input id="shortURL" type="hidden" name="shortURL" value="Short URL">
+            <input id="userID" type="hidden" name="userID" value="Enter Email">
+            <input type="submit" value="Update">
+          </form>
+        </li>
+      </gb>
+    <% } %>
+    <a href="/urls"> Home</a>
+  </body>
+</html>

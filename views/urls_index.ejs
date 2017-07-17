@@ -9,25 +9,26 @@
 
     <%for (key in urls) { %>
 
-      <tr>
+      <ul>
 
         <td><%= key %>:
         <a href="u/<%= key %>"><%= urls[key] %></a></td>
 
-        <td>
+        <li>
           <form action="/urls/<%= key %>/delete" method="POST">
             <input type="submit" value="Delete" />
           </form>
-        </td>
+        </li>>
 
         <td><a href="/urls/<%= key %>">Edit</a></td>
 
-      </tr>
+      </ul>
 
     <% } %>
 
 
   <a href="/urls/new">New URL</a>
+
 
 
 

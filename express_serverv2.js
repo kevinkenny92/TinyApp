@@ -1,5 +1,8 @@
 //file for submission//
 
+
+
+//1 Express Server and Requirements
 var express = require("express");
 var app = express();
 var bcrypt = require("bcrypt");
@@ -39,17 +42,17 @@ var users = {
   }
 };
 
-
+///GET
 
 app.get("/", (req, res) => {
-  if (req.session.user_id === undefined) {
+  if (req.session.user_id === undefined) {        //when user is not registered redirect to login
     return res.redirect("/login");
   } else {
-    res.redirect("/urls");
+    res.redirect("/urls");                //if user is registred redirects us to urls
   }
 });
 
-app.get("/urls", (req, res) => {
+app.get("/urls", (req, res) => {            //shows URLs_INDEX
   var displayUrls= {};
   if (req.session.user_id !== undefined) {
     displayUrls= urlsForUser(req.session.user_id);
@@ -60,7 +63,7 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
-app.get("/urls/new", (req, res) => {
+app.get("/urls/new", (req, res) => {            //creates new URLs
   var templateVars = {
     user: users[req.session["user_id"]]
   };
@@ -93,23 +96,36 @@ app.get("/urls/:id", (req, res) => {
 });
 app.get("/login", (req, res) => {
 
-  if (req.session["user_id"] !== undefined) {
-    return res.redirect("/urls");
+  if (req.session["user_id"] !== undefined) {       //get route to  login
+    return res.redirect("/urls");                  //if user is already logged in then it will take them to the urls
   } else {
     var templateVars = {
       user: users[req.session["user_id"]]
     };
-    res.render("login", templateVars);
+    res.render("login", templateVars);          //if not, it will ask the user to go to the log in page
   }
 });
-app.get("/register", (req, res) => {
-  if (req.session["user_id"] !== undefined) {
+app.get("/register", (req, res) => {            //get route to  register
+  if (req.session["user_id"] !== undefined) {       //if user is already logged in then it will take them to the urls
     return res.redirect("/urls");
   } else {
-    var templateVars = {
+    var templateVars = {                        //if not, it will ask the user to go to the log in page
       user: users[req.session.user_id]
     };
     res.render("register", templateVars);
+  }
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  if (urlDatabase[req.params.shortURL] === undefined) {      // If the shortURL is invalid, display an error page
+    var templateVars = {
+      user: users[req.session.user_id]
+    };
+    return res.render("urls_invalid", templateVars);        //created a new file called urls_invalid for messages.
+  // Otherwise direct to the long URL
+  } else {
+    var longURL = urlDatabase[req.params.shortURL].url;
+    res.redirect(longURL);
   }
 });
 
@@ -118,12 +134,12 @@ app.post("/login", (req, res) => {
   var emailEx = [];
   var useridMatch= "";
   for (var userId in users) {
-    if (users.hasOwnProperty(userId)) {
+    if (users.hasOwnProperty(userId)) {         //if email exists
       emailEx.push(users[userId].email);
     }
   }
-  if (emailEx.indexOf(req.body.email) === -1) {
-    return res.end("Email and/or password invalid! Please try again!");
+  if (emailEx.indexOf(req.body.email) === -1) {     //if email exists, but details are not right
+    return res.end("Email and/or password invalid! Please try again! Or register first!  ");
   } else {
     for (var userId in users) {
       if (users.hasOwnProperty(userId)) {
@@ -132,10 +148,10 @@ app.post("/login", (req, res) => {
         }
       }
     }
-    var hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    var hashedPassword = bcrypt.hashSync(req.body.password, 10); //checks typed password with submitted password.
     if (bcrypt.compareSync(req.body.password, users[useridMatch].hashedPassword)) {
       req.session.user_id = useridMatch;
-      return res.redirect("/urls");
+      return res.redirect("/urls");     //if incorrect it will return an error message.
     } else {
       res.end("Email and/or password invalid! Please try again! Or register first! ");
     }
@@ -143,7 +159,7 @@ app.post("/login", (req, res) => {
 });
 
 
-app.post("/register", (req, res) => {
+app.post("/register", (req, res) => {       //post for registering a new user
   for (var userId in users) {
     if (users.hasOwnProperty(userId)) {
       if (req.body.email === users[userId].email) {
@@ -152,8 +168,11 @@ app.post("/register", (req, res) => {
     }
   }
   if (req.body.email === "") {
+    //if email section is empty will return "Please fill out email "
     return res.end("Please fill out email section");
+
   } else if (req.body.password === "") {
+     //if password section is empty will return "Please fill out password "
     return res.end("Please fill out password section");
   } else {
 
@@ -164,11 +183,11 @@ app.post("/register", (req, res) => {
       hashedPassword: bcrypt.hashSync(req.body.password, 10)
     };
     req.session.user_id = rndmString;
-    res.redirect("/urls");
+    res.redirect("/urls");      //after creating username and password, it redirects to the URL section
   }
 });
 
-app.post("/urls", (req, res) => {
+app.post("/urls", (req, res) => {          //  POST ROUTE for new URLs being shortened
 
   if (req.session["user_id"] !== undefined) {
     var rndmString = generateRandomString();
@@ -179,7 +198,7 @@ app.post("/urls", (req, res) => {
     };
 
     return res.redirect("/urls/" + rndmString);
-  } else {
+  } else {    //ELSE, if usern is not validated, then does not permit user to change file.
     res.end("Invalid, please create an account first");
   }
 });
@@ -190,33 +209,40 @@ app.post("/urls/:id", (req, res) => {
     var fullURL = req.body.newLongURL;
     var shortURL = req.body.shortURL;
     urlDatabase[req.body.shortURL].url = req.body.newLongURL;
-    return res.redirect("/urls");
+    return res.redirect("/urls");         // Redirect back to the urls index page
   } else {
-    res.end("Invalid, unable to modify URL, please log in with a valid account first");
+    res.end("Invalid, unable to modify URL, please log in with a valid account first");   // if user is not authenticatd then it will not allow user to edit files
   }
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+//for deleting exisiting URLS
   if (urlDatabase[req.params.id].userID === users[req.session["user_id"]].id) {
     delete urlDatabase[req.params.id];
     return res.redirect("/urls");
-  } else {
+  } else { //if user is not authenticatd then it will not allow user to delete files
     res.end("Unable to delete, only logged in user may delete files");
   }
 });
+
+//LOGS
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
 });
 
+
+
+//LISTENER
+
 app.listen(PORT, () => {
   console.log(`example listening on port ${PORT}!`);
 });
 
-
+/// Random string generator to create  keys for URLs
 function generateRandomString() {
   var text = "";
-  var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+  var possible = "abcdefghijklmnopqrstuvwxy z0123456789";
 
   for (var i = 0; i < 6; i++)
     text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -224,11 +250,14 @@ function generateRandomString() {
   return text;
 }
 
+
+
+// Object of links made, using userID function
 function urlsForUser(id) {
   var userUrls = {};
   for (var urlID in urlDatabase) {
     if (urlDatabase.hasOwnProperty(urlID)) {
-      if (urlDatabase[urlID].userID === id) {
+      if (urlDatabase[urlID].user === id) {
         userUrls[urlID] = urlDatabase[urlID];
       }
     }

@@ -3,6 +3,7 @@
   <title>TinyApp: Show URLs</title>
 </head>
 <body>
+        <% include partials/_header.ejs %>
       <% if (fullURL === undefined) { %>
       <l>Invalid  URL</l>
       <form action="/urls/:<%= shortURL %> method="POST">

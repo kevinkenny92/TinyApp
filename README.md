@@ -20,4 +20,4 @@ Descriptions are on the file names.
 ##Getting Started
 
 -Install all dependecies (using the 'npm install' command).
--Run the development web server using the node 'node express_server.js' command.
+-Run the development web server using the node 'node express_serverv2.js' command.
